@@ -1,5 +1,5 @@
 # Mapfre Previdencia
-A tool to consult your mapfre private rest total ammount or your 1 year extract.
+A tool to consult your mapfre private rest total amount or your 1 year extract.
 
 To use this tool, it is necessary to install the following packages:
  - Python 2
