@@ -1,4 +1,4 @@
-# Mapfre-Previdencia
+# Mapfre Previdencia
 A tool to consult your mapfre private rest total ammount or your 1 year extract.
 
 To use this tool, it is necessary to install the following packages:
