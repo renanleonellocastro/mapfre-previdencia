@@ -23,7 +23,7 @@ optional arguments:
   -e, --extract         Show the extract.
   -s SIMULATE, --simulate SIMULATE
                         Simulate with a given html file page.
-  -d, --debug           Show the extract.
+  -d, --debug           Execute in debug mode.
   ```
 # Mapfre.xml
   
