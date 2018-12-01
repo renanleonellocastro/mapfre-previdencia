@@ -28,7 +28,10 @@ optional arguments:
 # Mapfre.xml
   
 It is necessary to fill your credentials on your local xml file to make use of the application.
+
 Substitute the following tags on "etc/mapfre.xml" in your local directory:
+<pre>
  - <cpf>YOUR_CPF</cpf> -> <cpf>xxxxxxxxxxx</cpf> (xxxxxxxxxxx = your cpf number)
  - <password>YOUR_PASSWORD</password>-> <password>xxxx</password> (xxxx = your mapfre password)
  - <contract>YOUR_CONTRACT_NUMBER</contract>-> <contract>xxxxxxxx</contract> (xxxxxxxx = your mapfre contract number)
+</pre>
