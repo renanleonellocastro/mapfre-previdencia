@@ -1,0 +1,123 @@
+#!/usr/bin/python
+
+import argparse
+import datetime
+from xml.etree import ElementTree
+from prettytable import PrettyTable
+from automatedweb import AutomatedWeb
+
+# Parse the input arguments
+#----------------------------------------------------------------------------------------------------------------------
+def parse():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("-t", "--total", help="Show the total money.",\
+        action="store_true")
+    parser.add_argument("-e", "--extract", help="Show the extract.",\
+        action="store_true")
+    parser.add_argument("-s", "--simulate", help="Simulate with a given html file page.",\
+        default=None)
+    parser.add_argument("-d", "--debug", help="Execute in debug mode.",\
+        action="store_true")
+    parser.add_argument("config", help="Xml file with configuration data.")
+
+    args = parser.parse_args()
+
+    return args
+
+# Read xml data from file
+#----------------------------------------------------------------------------------------------------------------------
+def xmlRead(parseString, configFile):
+    
+    return ElementTree.parse(configFile).findall(parseString)[0].text
+
+# Get the total money
+#----------------------------------------------------------------------------------------------------------------------
+def printTotalMoney(web, configFile):
+
+    print(web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 1) + ': ' +\
+        web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 5))
+    print(web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 7) + ': ' +\
+        web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 11))
+    print(web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 13) + ': ' +\
+        web.getDataFromPage('div.bgCinzaC2 td.bgCinzaC2', 17))
+
+# Print the extract of investment
+#----------------------------------------------------------------------------------------------------------------------
+def printExtract(web, configFile, simulate=None):
+
+    table = None
+    day = datetime.datetime.now().day
+    month = datetime.datetime.now().month
+    year = datetime.datetime.now().year
+
+    contractUrl = xmlRead("urls/contract", configFile)
+    extractUrl = xmlRead("urls/extract", configFile)
+    contractData = {'contrato': xmlRead("contract", configFile), 'adesao': '1', 'opcao': 'on'}
+    extractData = {'diaDe': day, 'mesDe': month, 'anoDe': year - 1, 
+                       'diaAte': day, 'mesAte': month, 'anoAte': year}
+    
+    if not simulate:
+        web.executePost(contractUrl, contractData)
+        web.executePost(extractUrl, extractData)
+
+    table = getExtract(web)
+
+    print ('---------------------------------------------------Mapfre---------------------------------------------------')
+    print table
+
+# Get the extract of investment from page
+#----------------------------------------------------------------------------------------------------------------------
+def getExtract(web):
+    
+    table = PrettyTable()
+    printing = True
+    line = None
+    tablePosition = 4
+    table.field_names = ["Data Do Mov.", "Data do Process.", "Descricao", "Valor Empresa", "Valor Particip.", "Total"]
+    
+    while printing:
+        line = []
+        for i in range(1,7):
+            line.append(web.getDataFromPage\
+                ('td#texto5b tr:nth-child(3) div.bgCinzaC2 tr:nth-child(%d) td.linha_bottom:nth-child(%d)'\
+                %(tablePosition,i)))
+        if not line[0]:
+            printing = None
+        else:
+            table.add_row(line)
+        tablePosition+=1
+
+    return table
+
+# The main application works here
+#----------------------------------------------------------------------------------------------------------------------
+def main():
+
+    arguments = parse()
+    
+    configFile = arguments.config
+    
+    loginUrl = xmlRead("urls/login", configFile)
+    privateRestUrl = xmlRead("urls/private_rest", configFile)
+    loginData = {'optTipo': 'F', 'txtCodigoBase': xmlRead("cpf", configFile)[0:9], 'txtCodigoBaseOrdem': '',
+                     'txtCodigoBaseDig': xmlRead("cpf", configFile)[9:11], 'cgc': '',
+                     'txtSenha': xmlRead("password", configFile)}
+    privateRestData = {'message': '', 'txtCodigoBase': '0', 'txtCodigoBaseDig': '0', 'txtCodigoBaseOrdem': '0'}
+
+    web = AutomatedWeb(arguments.simulate, arguments.debug)
+    
+    if not arguments.simulate:
+        web.executePost(loginUrl, loginData)
+        web.executePost(privateRestUrl, privateRestData)
+
+    if arguments.total:
+        printTotalMoney(web, configFile)
+    
+    if arguments.extract:
+        printExtract(web, configFile, arguments.simulate)
+
+# Starts the app
+#----------------------------------------------------------------------------------------------------------------------
+main()
