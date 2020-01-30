@@ -104,13 +104,12 @@ def main():
     loginData = {'optTipo': 'F', 'txtCodigoBase': xmlRead("cpf", configFile)[0:9], 'txtCodigoBaseOrdem': '',
                      'txtCodigoBaseDig': xmlRead("cpf", configFile)[9:11], 'cgc': '',
                      'txtSenha': xmlRead("password", configFile)}
-    privateRestData = {'message': '', 'txtCodigoBase': '0', 'txtCodigoBaseDig': '0', 'txtCodigoBaseOrdem': '0'}
 
     web = AutomatedWeb(arguments.simulate, arguments.debug)
     
     if not arguments.simulate:
         web.executePost(loginUrl, loginData)
-        web.executePost(privateRestUrl, privateRestData)
+        web.executeGet(privateRestUrl)
 
     if arguments.total:
         printTotalMoney(web, configFile)
