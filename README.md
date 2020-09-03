@@ -8,6 +8,8 @@ To use this tool, it is necessary to install the following packages:
  - Python datetime
  - Python xml.etree
  - Python prettytable
+ - Python json
+ - Python urllib
 
 # Tool Usage
 
