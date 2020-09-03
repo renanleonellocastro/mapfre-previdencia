@@ -3,6 +3,7 @@
     <password>YOUR_PASSWORD</password>
     <contract>YOUR_CONTRACT_NUMBER</contract>
     <urls>
+        <login_token>https://mol.mapfre.com.br/clubeMapfre/criptografiaAjax.jsp</login_token>
         <login>https://mol.mapfre.com.br/clubeMapfre/acesso/login_ex.jsp</login>
         <private_rest>https://mol.mapfre.com.br/clubeMapfre/previdencia2/index.jsp</private_rest>
         <contract>https://mol.mapfre.com.br/clubeMapfre/previdencia2/setaAdesao.jsp</contract>

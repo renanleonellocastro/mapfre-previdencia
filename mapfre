@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import json
+import urllib
 import argparse
 import datetime
 from xml.etree import ElementTree
@@ -99,8 +101,15 @@ def main():
     
     configFile = arguments.config
     
+    loginTokenUrl = xmlRead("urls/login_token", configFile)
+
     loginUrl = xmlRead("urls/login", configFile)
+
     privateRestUrl = xmlRead("urls/private_rest", configFile)
+
+    loginTokenQueryString= '?stringCript=' + urllib.quote('codigoBase=' + xmlRead("cpf", configFile)[0:9] +
+        '&digitoBase=' + xmlRead("cpf", configFile)[9:11] + '&optTipo=F&senha=' + xmlRead("password", configFile))
+
     loginData = {'optTipo': 'F', 'txtCodigoBase': xmlRead("cpf", configFile)[0:9], 'txtCodigoBaseOrdem': '',
                      'txtCodigoBaseDig': xmlRead("cpf", configFile)[9:11], 'cgc': '',
                      'txtSenha': xmlRead("password", configFile)}
@@ -108,6 +117,8 @@ def main():
     web = AutomatedWeb(arguments.simulate, arguments.debug)
     
     if not arguments.simulate:
+        web.executePost(loginTokenUrl + loginTokenQueryString, {})
+        loginUrl = loginUrl + '?token=' + json.loads(web.getCurrentPage())['data'][0][0]
         web.executePost(loginUrl, loginData)
         web.executeGet(privateRestUrl)
 
